@@ -1,10 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import AuthGoogle from './AuthCredentials'; 
+import useFadeIn from "../hooks/state/useFadeIn";
 
 export default function Register() {
+
+  const [Section] = useFadeIn(true);
   return (
-    <>
+    <Section>
       <div className="p-8 lg:w-1/2 mx-auto">
         <AuthGoogle />
         <div className="bg-gray-100 rounded-b-lg py-12 px-4 lg:px-24">
@@ -59,7 +62,7 @@ export default function Register() {
             </div>
           </form>
         </div>
-      </div>
-    </>
+      </div> 
+    </Section>
   );
 }

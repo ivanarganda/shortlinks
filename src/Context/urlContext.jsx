@@ -21,6 +21,7 @@ const UrlsProvider = ({ children }) => {
     };
 
     const handleSearch = (e) => {
+        setLoading( true );
         setSearch(e.target.value);
     };
 
@@ -33,7 +34,6 @@ const UrlsProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        setLoading(true);
         axios.get(`${API_URL}?short_like=${search}&idUser=0`).then(response => {
             setUrls(response.data);
             setLoading(false);

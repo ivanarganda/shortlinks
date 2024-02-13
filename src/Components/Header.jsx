@@ -6,7 +6,7 @@ import { motion, useScroll } from "framer-motion";
 export default function Header() {
 
   const { scrollYProgress } = useScroll();
-  const [ Section ] = useFadeIn();
+  const [ Section ] = useFadeIn(true);
 
   return (
     <>

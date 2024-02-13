@@ -1,9 +1,13 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import AuthGoogle from './AuthCredentials';
+import React from "react";
+import { Link } from "react-router-dom";
+import AuthGoogle from "./AuthCredentials";
+import useFadeIn from "../hooks/state/useFadeIn";
 
 export default function Login() {
+  const [Section] = useFadeIn(true);
+
   return (
+    <Section>
       <div className="p-8 lg:w-1/2 mx-auto min-w-[350px]">
         <AuthGoogle />
         <div className="bg-gray-100 rounded-b-lg py-12 px-4 lg:px-24">
@@ -57,8 +61,10 @@ export default function Login() {
               />
               <label htmlFor="remember">Remember me</label>
             </div>
-            <div className='mt-4 flex items-center text-gray-500'>
-              <span>Don´t you have account yet? <Link to='/register'>Sign up</Link></span> 
+            <div className="mt-4 flex items-center text-gray-500">
+              <span>
+                Don´t you have account yet? <Link to="/register">Sign up</Link>
+              </span>
             </div>
             <div className="flex items-center justify-center mt-8">
               <button className="text-white py-2 px-4 uppercase rounded bg-indigo-500 hover:bg-indigo-600 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
@@ -68,5 +74,6 @@ export default function Login() {
           </form>
         </div>
       </div>
+    </Section>
   );
 }
