@@ -26,7 +26,7 @@ export default function Footer() {
                 <img src={link} alt="" className="ratio-[1/2] w-10 h-10" />
                 <span className='text-2xl'>Shorted links</span>
               </span>
-              <div className="w-full lg:max-w-sm flex flex-row justify-around items-center">
+              <ul className="w-full lg:max-w-sm flex flex-row justify-around items-center">
                 <li className="list-none list__options">
                   <a
                     href="https://ivanarganda.github.io/ivanarganda/"
@@ -51,7 +51,7 @@ export default function Footer() {
                     <FaWhatsapp style={{fontSize:'30px'}} />
                   </a>
                 </li>
-              </div>
+              </ul>
             </div>
           </div>
           <div className="flex flex-col justify-center pt-5 pb-10 border-t border-gray-500 sm:flex-row">

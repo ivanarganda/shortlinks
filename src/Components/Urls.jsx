@@ -12,27 +12,23 @@ export default function Urls({ changeType }) {
   const [ copied , setCopied ] = useState( false );
 
   const handleCopyToClipboard = ( id , text) => {
-    
-    let copied = false;
 
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text)
         .then(() => {
           console.log('Text copied to clipboard:', text);
-          copied = true;
+          setCopied( id );
         })
         .catch((error) => {
           console.error('Error copying text to clipboard:', error);
-          copied = false;
         });
     } else {
       copyTextFallback(text);
-      copied = true;
+      setCopied( id );
     }
 
-    if (copied){
-      setCopied( id );
-      useMessage(`Copied ${text}`, 'success', 2000, 'top', 'center');
+    if ( copied ){
+      useMessage(`Copied ${text}`, 'success', 1000, 'top', 'center');
     }
   };
 
@@ -87,11 +83,11 @@ export default function Urls({ changeType }) {
                           <div className="text-sm font-normal text-gray-500 tracking-wide pr-2">
                             {
                                 copied !== item.id ? 
-                                    <button onClick={() => handleCopyToClipboard( item.id , item.short)} className='px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900'>
+                                    <button aria-label='button for copy short' onClick={() => handleCopyToClipboard( item.id , item.short)} className='px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900'>
                                         <ContentCopyIcon />
                                     </button>
                                 :  
-                                    <button onClick={( e ) => e.preventDefault() } className='px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900'>
+                                    <button aria-label='for decoration, check' onClick={( e ) => e.preventDefault() } className='px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900'>
                                         <CheckIcon />
                                     </button>
                             }

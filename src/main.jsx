@@ -14,8 +14,9 @@ import './index.css'
 import Footer from './Components/Footer.jsx';
 import MyUrls from './Components/MyUrls';
 import RedirectShort from './Components/RedirectShort';
+import useFadeIn from './hooks/state/useFadeIn.jsx';
 
-
+const [ Section ] = useFadeIn();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -27,12 +28,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Routes>
             <Route exact path="/" element={<App />} />
             <Route exact path="/:key/:code" element={<RedirectShort />} />
-            <Route exact path="/login" element={<Login />} />
-            <Route exact path="/register" element={<Register />} />
-            <Route exact path="/dashboard" element={<Dashboard />} />
+            <Route exact path="/login" element={<Section><Login /></Section>} />
+            <Route exact path="/register" element={<Section><Register /></Section>} />
+            <Route exact path="/dashboard" element={<Section><Dashboard /></Section>} />
             <Route exact path="/dashboard/profile" element={<MyUrls />} />       
           </Routes>
-          <Footer />
+          <Section><Footer /></Section>
           <Snackbar_ />
         </Router>
       </MsgProvider>

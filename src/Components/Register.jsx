@@ -34,7 +34,7 @@ export default function Register() {
             <div className="relative mt-3">
               <input
                 className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600 transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
-                id="username"
+                id="password"
                 type="text"
                 placeholder="Password"
               />
