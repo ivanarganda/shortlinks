@@ -2,6 +2,7 @@ import React from "react";
 import useFadeIn from "../hooks/state/useFadeIn";
 
 export default function GenerateShort({ changeType }) {
+  
   const [Section] = useFadeIn(true);
 
   return (

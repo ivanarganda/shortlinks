@@ -7,9 +7,10 @@ const UrlsProvider = ({ children }) => {
     const [urls, setUrls] = useState([]);
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
+    const [idUser , setIdUser ] = useState(0);
 
-    const API_URL = 'https://ws-shortlinks.onrender.com/api/urls/';
-    // const API_URL = 'http://linkshort.website:3000/api/urls/';
+    // const API_URL = 'https://ws-shortlinks.onrender.com/api/urls/';
+    const API_URL = 'http://localhost:3000/api/urls/';
 
     const deleteUrl = (id) => {
         axios.delete(`${API_URL}${id}`).then(() => {
@@ -33,14 +34,18 @@ const UrlsProvider = ({ children }) => {
         });
     };
 
-    useEffect(() => {
-        axios.get(`${API_URL}?short_like=${search}&idUser=0`).then(response => {
+    const getUrls = ()=>{
+        axios.get(`${API_URL}?short_like=${search}&idUser=${idUser}`).then(response => {
             setUrls(response.data);
             setLoading(false);
         }).catch(error => {
             console.error('Error fetching URLs:', error);
             setLoading(false);
         });
+    }
+
+    useEffect(() => {
+        getUrls();
     }, [search]);
 
     return (
