@@ -1,10 +1,14 @@
 import React from 'react'
 import Resume from './Resume';
+import useFadeIn from './../hooks/state/useFadeIn';
 
 export default function Dashboard() {
-  return (
-    <>
+
+  const [ Section ] = useFadeIn(true);
+
+  return (  
+    <Section>
         <Resume />
-    </>
+    </Section>
   )
 }

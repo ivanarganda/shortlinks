@@ -7,7 +7,7 @@ import { FaWhatsapp } from 'react-icons/fa';
 
 export default function Footer() {
   return (
-    <div className={`relative w-[100%] min-w-[350px] left-0 bottom-0 items-center p-10`}>
+    <div className={`relative w-full min-w-[350px] left-0 bottom-0 items-center text-purple-400`}>
       <div className="relative w-full mt-16 bg-[#030637]">
         <svg
           className="absolute top-0 w-full h-6 -mt-5 sm:-mt-10 sm:h-16 bg-[#030637] rounded-2xl"
@@ -31,6 +31,7 @@ export default function Footer() {
                   <a
                     href="https://ivanarganda.github.io/ivanarganda/"
                     aria-label="Repository of github where I place projects about development to me"
+                    className='hover:text-gray-100'
                   >
                     <FaGithub style={{fontSize:'30px'}} />
                   </a>
@@ -39,6 +40,7 @@ export default function Footer() {
                   <a
                     href="https://www.linkedin.com/in/ivan-gonzalez-a41461121/"
                     aria-label="My profile of linkedin"
+                    className='hover:text-gray-100'
                   >
                     <FaLinkedin style={{fontSize:'30px'}} />
                   </a>
@@ -47,6 +49,7 @@ export default function Footer() {
                   <a
                     href="https://web.whatsapp.com/tel=+34657203570"
                     aria-label="My whatsapp contact where you can chat on me"
+                    className='hover:text-gray-100'
                   >
                     <FaWhatsapp style={{fontSize:'30px'}} />
                   </a>

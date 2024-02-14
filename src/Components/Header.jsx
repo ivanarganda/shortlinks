@@ -6,12 +6,11 @@ import { motion, useScroll } from "framer-motion";
 export default function Header() {
 
   const { scrollYProgress } = useScroll();
-  const [ Section ] = useFadeIn(true);
 
   return (
     <>
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-green-500"
+        className="fixed top-0 left-0 right-0 h-1 bg-purple-500"
         style={{ scaleX: scrollYProgress }}
       />
       <div className='min-w-[350px]'>
@@ -23,9 +22,6 @@ export default function Header() {
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
             </svg>
         </a>
-        <Section>
-            <Resume />
-        </Section>
       </div> 
     </>
   )
