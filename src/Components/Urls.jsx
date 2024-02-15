@@ -9,10 +9,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Urls({ changeType }) {
-  const { useMessage } = useContext(MsgContext);
-  const { urls, setUrls, loading, redirectByShortLink, handleSearch } = useContext(UrlsContext);
-
-  const [copied, setCopied] = useState(false);
+  
+  const { urls, setUrls, copied , loading, handleCopyToClipboard , redirectByShortLink, handleSearch } = useContext(UrlsContext);
 
   // Debounce function
   const debounce = (func, delay) => {
@@ -29,10 +27,10 @@ export default function Urls({ changeType }) {
 
   const ListItem = ({ item }) => (
     <motion.li
-      initial={copied && { opacity: 0, y: -20 }}
-      animate={copied && { opacity: 1, y: 0 }}
-      exit={copied && { opacity: 0, y: -20 }}
-      transition={copied && { duration: 0.5 }}
+      initial={{opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.5 }}
     >
       <div key={item.id} className="py text-sm">
         <div className="flex flex-col lg:flex-row lg:justify-between items-center cursor-pointer text-gray-700 rounded-md px-2 py-2 my-2">
@@ -54,12 +52,12 @@ export default function Urls({ changeType }) {
               {copied !== item.id ? (
                 <button
                   aria-label="button for copy short"
-                  onClick={() => handleCopyToClipboard(item.id, item.short)}
+                  onClick={() => { handleCopyToClipboard(item.id, item.short);  }}
                   className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900"
                 >
                   <ContentCopyIcon />
                 </button>
-              ) : (
+              ) : ( 
                 <button
                   aria-label="for decoration, check"
                   onClick={(e) => e.preventDefault()}
@@ -79,37 +77,6 @@ export default function Urls({ changeType }) {
       </div>
     </motion.li>
   );
-
-  const handleCopyToClipboard = (id, text) => {
-    if (navigator.clipboard) {
-      navigator.clipboard
-        .writeText(text)
-        .then(() => {
-          console.log("Text copied to clipboard:", text);
-          setCopied(id);
-        })
-        .catch((error) => {
-          console.error("Error copying text to clipboard:", error);
-        });
-    } else {
-      copyTextFallback(text);
-      setCopied(id);
-    }
-
-    if (copied) {
-      useMessage(`Copied ${text}`, "success", 1000, "top", "center");
-    }
-  };
-
-  const copyTextFallback = (text) => {
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand("copy");
-    document.body.removeChild(textarea);
-    console.log("Text copied to clipboard (fallback):", text);
-  };
 
   return (
     <div className="w-full max-w-screen-xl mx-auto px-6">

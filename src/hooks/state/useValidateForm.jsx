@@ -1,17 +1,20 @@
-import React, { useState, useContext } from 'react';
-import axios from 'axios';
+import React, { useState, useContext } from "react";
 
-export default function useValidateForm() {
-
-  const [fields, setFields] = useState({
-
-    url: '',
-    short: '',
-
-  });
-
+export default function useValidateForm(type) {
+  const [fields, setFields] = useState(
+    type !== "login" || type !== "register"
+      ? {
+          url: "",
+          short: "",
+        }
+      : {
+          email: "",
+          password: "",
+      }
+  );
+  
   const handleFields = (e) => {
- 
+
     const { name, value } = e.target;
 
     setFields({
@@ -19,10 +22,7 @@ export default function useValidateForm() {
       [name]: value,
     });
 
-    console.log( fields );
-
   };
 
-  return [fields,handleFields];
-
+  return [fields , handleFields ];
 }

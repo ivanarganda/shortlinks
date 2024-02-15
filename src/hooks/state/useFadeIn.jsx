@@ -7,7 +7,7 @@ export default function useFadeIn(threshold = 0.5) {
         const isInView = useInView(ref, { threshold });
 
         return (
-            <section ref={ref}>
+            <section className='mb-6' ref={ref}>
                 <span
                     style={{
                         transform: isInView ? "none" : "translateX(-200px)",
