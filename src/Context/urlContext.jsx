@@ -13,7 +13,7 @@ const UrlsProvider = ({ children }) => {
   const [copied, setCopied] = useState(false);
 
   const API_URL = 'https://ws-shortlinks.onrender.com';
-//   const API_URL = "http://localhost:3000";
+  // const API_URL = "http://localhost:3000";
   const DOMAIN_PROD = "https://linkshort.website";
 
   const deleteUrl = (id) => {
@@ -62,10 +62,17 @@ const UrlsProvider = ({ children }) => {
     setLoading(true);
 
     let url = e.target.url.value;
+    let description = e.target.description.value;
 
     if (!url) {
       setLoading(false);
       setErrors("Empty URL");
+      return;
+    }
+
+    if (!description){
+      setLoading(false);
+      setErrors("Empty description");
       return;
     }
 
@@ -85,10 +92,10 @@ const UrlsProvider = ({ children }) => {
       console.log(DOMAIN_PROD + response.data); // Assuming your response contains data
       let lastId = await axios.get(`${API_URL}/api/urls?_sort=id&_order=desc`);
       let json_data = {
-        id: lastId.data[0].id + 1,
+        id: lastId.data.length !== 0 ? lastId.data[0].id + 1 : 1,
         url: url,
         short: DOMAIN_PROD + response.data,
-        description: "",
+        description: description,
         idUser: 0,
       };
       console.log(json_data);
@@ -96,6 +103,7 @@ const UrlsProvider = ({ children }) => {
       const contentJSON = await axios.get(`${API_URL}/api/urls`);
       setGenerated(DOMAIN_PROD + response.data);
       setUrls(contentJSON.data);
+      getUrls();
       setLoading(false);
     } catch (error) {
       // Si falla la solicitud HEAD, establece un mensaje de error indicando que la URL no existe

@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+/* eslint-disable */
+import { useContext, useState } from "react";
 import useFadeIn from "../hooks/state/useFadeIn";
 import useValidateForm from "./../hooks/state/useValidateForm";
 import { UrlsContext } from "../Context/urlContext";
@@ -54,14 +55,23 @@ export default function GenerateShort({ changeType }) {
                         }
                       </Section>
                       { !generated && (
-                      <input
-                        type="text"
-                        id="url"
-                        name="url"
-                        className={`appearance-none text-gray-600 border pl-12 ${ errors != "" ? "border-red-400" : "border-gray-100" }  shadow-sm focus:shadow-md focus:placeholder-gray-600 transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline`}
-                        placeholder="https://example.com"
-                        onChange={handleFields}
-                      /> ) }
+                        <div className="flex flex-col gap-5">
+                        <input
+                          type="text"
+                          id="url"
+                          name="url"
+                          className={`appearance-none text-gray-600 border pl-12  shadow-sm focus:shadow-md focus:placeholder-gray-600 transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline`}
+                          placeholder="https://example.com"
+                          onChange={handleFields}
+                        />
+                        <input
+                          type="text"
+                          id="description"
+                          name="description"
+                          className={`appearance-none text-gray-600 border pl-12 shadow-sm focus:shadow-md focus:placeholder-gray-600 transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline`}
+                          placeholder="Is an example"
+                          onChange={handleFields}
+                        /></div> ) }
                     </div>  
                   ) : (
                       <CircularProgress />
