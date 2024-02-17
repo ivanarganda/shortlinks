@@ -123,7 +123,7 @@ const UrlsProvider = ({ children }) => {
 
   const redirectByShortLink = (id) => {
     axios
-      .get(`${API_URL}/urls/${id}`)
+      .get(`${API_URL}/api/urls/${id}`)
       .then((response) => {
         window.open(response.data.url, "_blank");
       })
