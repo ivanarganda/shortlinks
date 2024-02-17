@@ -22,20 +22,26 @@ const UrlsProvider = ({ children }) => {
       .delete(`${API_URL}/api/urls/${id}`)
       .then(() => {
         setUrls(urls.filter((url) => url.id !== id));
+        getUrls();
       })
       .catch((error) => handleRequestError(error, "Error removing Short"));
   };
 
   const saveUrl = (json_data , idUser ) => {
     
-    // json_data.idUser = idUser;
-    // console.log( json_data ); 
-    // axios
-    //   .post(`${API_URL}/api/urls` , json_data )
-    //   .then(() => {
-    //     getUrls();
-    //   })
-    //   .catch((error) => handleRequestError(error, "Error saving Short"));
+    json_data.idUser = idUser;
+    console.log( json_data ); 
+    axios
+      .post(`${API_URL}/api/urls` , {
+        url:json_data.url,
+        short:json_data.short,
+        description:json_data.description,
+        idUser:json_data.idUser
+      })
+      .then(() => {
+        getUrls();
+      })
+      .catch((error) => handleRequestError(error, "Error saving Short"));
   };
 
   const handleCopyToClipboard = (id, text) => {
@@ -132,9 +138,15 @@ const UrlsProvider = ({ children }) => {
       );
   };
 
+  const checkSaved = async( item )=>{
+    const response = await axios.get(`${API_URL}/api/urls/?url=${item.url}&short=${item.short}&description=${item.description}`);
+    console.log( `${API_URL}/api/urls/?url=${item.url}&short=${item.short}&description=${item.description}` );
+    return parseInt(response.data.length); 
+  }
+
   const getUrls = () => {
     axios
-      .get(`${API_URL}/api//urls/?short_like=${search}&idUser=${idUser}`)
+      .get(`${API_URL}/api/urls/?short_like=${search}&idUser=${idUser}`)
       .then((response) => {
         setUrls(response.data);
         setLoading(false);
@@ -155,7 +167,7 @@ const UrlsProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    getUrls();
+    getUrls(); 
   }, [search, copied, idUser]);
 
   return (
@@ -172,6 +184,7 @@ const UrlsProvider = ({ children }) => {
         handleSearch,
         deleteUrl,
         saveUrl,
+        checkSaved,
         redirectByShortLink,
         generateShortSubmit,
       }}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext , useEffect } from "react";
 import { UrlsContext } from "../Context/urlContext";
 import { AuthContext } from "../Context/authContext";
 
@@ -9,8 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Urls({ changeType, type }) {
-
-  const { urls, setIdUser, copied, loading, handleCopyToClipboard, redirectByShortLink, saveUrl , deleteUrl , handleSearch } = useContext(UrlsContext);
+  const { urls, setIdUser, copied, loading, handleCopyToClipboard, redirectByShortLink, saveUrl, deleteUrl, checkSaved , handleSearch } = useContext(UrlsContext);
   const { session } = useContext(AuthContext);
 
   useEffect(() => {
@@ -19,7 +18,7 @@ export default function Urls({ changeType, type }) {
     } else {
       setIdUser(0);
     }
-  })
+  });
 
   // Debounce function
   const debounce = (func, delay) => {
@@ -35,7 +34,6 @@ export default function Urls({ changeType, type }) {
   const debouncedHandleSearch = debounce(handleSearch, 500); // 500ms debounce time
 
   const ListItem = ({ item }) => (
-
     <motion.li
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -80,22 +78,26 @@ export default function Urls({ changeType, type }) {
             <div className="text-sm font-normal text-gray-500 tracking-wide pr-2">
               {
                 type === "MyUrls" ? (
-                  <span className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
+                  <span onClick={() => { deleteUrl(item.id) }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
                     Remove
                   </span>
-                ) :
-                  (
-                    <span onClick={()=>{ 
-                      if ( session === false ){
+                ) : (
+                  checkSaved( item ) > 2 ? (
+                    <span onClick={() => { /* You can add functionality here for items that belong to the user */ }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
+                      Saved
+                    </span>
+                  ) : (
+                    <span onClick={() => {
+                      if (session === false) {
                         return false;
                       }
-                      saveUrl(item, session[0].id) 
-                      }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
+                      saveUrl(item, session[0].id);
+                    }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
                       Save
                     </span>
                   )
+                )
               }
-
             </div>
           </div>
         </div>
@@ -108,34 +110,29 @@ export default function Urls({ changeType, type }) {
       <div className="flex justify-center p-4 px-3 py-10">
         <div className="w-full max-w-xl">
           <div className="bg-white shadow-md rounded-lg px-2 py-2 mb-4 pl-2">
-            <div className="block text-gray-700 text-lg flex flex-row justify-around items-center font-semibold py-2 px-2">
+            <div className="block text-gray-700 text-lg flex flex-col gap-2 md:flex-row justify-around items-center font-semibold py-2 px-2">
               <span>Search for shorted links</span>
-              {
-                type === "MyUrls" ? (
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      changeType("listUrls");
-                    }}
-                    className="px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
-                  >
-                    View all shorts
-                  </button>
-                ) : (
-
-                  session && <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      changeType("MyUrls");
-                    }}
-                    className="px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
-                  >
-                    My shorts
-                  </button>
-
-                )
-              }
-
+              {type === "MyUrls" ? (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    changeType("listUrls");
+                  }}
+                  className="px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
+                >
+                  View all shorts
+                </button>
+              ) : (
+                session && <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    changeType("MyUrls");
+                  }}
+                  className="px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
+                >
+                  My shorts
+                </button>
+              )}
               <button
                 onClick={(e) => {
                   e.preventDefault();
