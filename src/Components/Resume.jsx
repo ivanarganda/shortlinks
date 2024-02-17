@@ -1,6 +1,7 @@
 import React,{ useState } from 'react'
 import Urls from './Urls';
 import GenerateShort from './GenerateShort'; 
+import MyUrls from './MyUrls';
 
 
 export default function Resume() {
@@ -12,8 +13,9 @@ export default function Resume() {
     }
 
     const types = {
-        'listUrls':<Urls changeType={changeType}/>,
-        'generateShort':<GenerateShort changeType={changeType}/>
+        'listUrls':<Urls changeType={changeType} type={type}/>,
+        'generateShort':<GenerateShort changeType={changeType}/>,
+        'MyUrls':<Urls changeType={changeType} type={type}/>
     }
 
     return (

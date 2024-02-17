@@ -2,7 +2,7 @@ import React, { useContext , useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Context/authContext';
 
-export default function Auth( pathRedirect = '/login' ) {
+export default function Auth() {
 
   const navigate = useNavigate();
   const { session, recoverySession } = useContext(AuthContext);
@@ -20,8 +20,8 @@ export default function Auth( pathRedirect = '/login' ) {
   },[ session ])
 
   useEffect(() => {
-    if (!session) {
-      navigate(pathRedirect);
+    if (session === false ) {
+      navigate('/login');
     } else {
       navigate('/dashboard');
     }

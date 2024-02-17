@@ -17,18 +17,20 @@ import RedirectShort from "./Components/RedirectShort";
 import useFadeIn from "./hooks/state/useFadeIn.jsx";
 import Resume from "./Components/Resume";
 import Auth from "./hooks/state/Auth";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const [Section] = useFadeIn();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    <GoogleOAuthProvider clientId='909316839836-f6ig5si1ab9qo7u8jtddt4or98rlhoju.apps.googleusercontent.com'>
     <AuthProvider>
       <UrlsProvider>
         <MsgProvider>
           <div className="w-full min-w-[350px]">
             <Router basename="/">
-              <Header />
               <Auth/>
+              <Header />
                 <Routes>
                   <Route exact path="/" element={<App />} />
                   <Route exact path="/:key/:code" element={<RedirectShort />} />
@@ -72,5 +74,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </MsgProvider>
       </UrlsProvider>
     </AuthProvider>
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );

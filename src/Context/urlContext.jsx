@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
+import useUrl from "../hooks/state/useUrl";
 
 const UrlsContext = createContext();
 
@@ -12,38 +13,43 @@ const UrlsProvider = ({ children }) => {
   const [generated, setGenerated] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const API_URL = 'https://ws-shortlinks.onrender.com';
-  // const API_URL = "http://localhost:3000";
-  const DOMAIN_PROD = "https://linkshort.website";
+  const API_URL = useUrl("api");
+  const DOMAIN_PROD = useUrl("domain");
 
+  // Only for user
   const deleteUrl = (id) => {
     axios
       .delete(`${API_URL}/api/urls/${id}`)
       .then(() => {
-        // Remove the deleted URL from the state
         setUrls(urls.filter((url) => url.id !== id));
       })
-      .catch((error) => {
-        console.error("Error deleting URL:", error);
-      });
+      .catch((error) => handleRequestError(error, "Error removing Short"));
+  };
+
+  const saveUrl = (json_data , idUser ) => {
+    
+    // json_data.idUser = idUser;
+    // console.log( json_data ); 
+    // axios
+    //   .post(`${API_URL}/api/urls` , json_data )
+    //   .then(() => {
+    //     getUrls();
+    //   })
+    //   .catch((error) => handleRequestError(error, "Error saving Short"));
   };
 
   const handleCopyToClipboard = (id, text) => {
     if (navigator.clipboard) {
       navigator.clipboard
         .writeText(text)
-        .then(() => {
-          console.log("Text copied to clipboard:", text);
-          setCopied(id);
-        })
-        .catch((error) => {
-          console.error("Error copying text to clipboard:", error);
-        });
+        .then(() => setCopied(id))
+        .catch((error) =>
+          handleRequestError(error, "Error copying text to clipboard")
+        );
     } else {
       copyTextFallback(text);
       setCopied(id);
     }
-    console.log(copied);
   };
 
   const copyTextFallback = (text) => {
@@ -53,7 +59,6 @@ const UrlsProvider = ({ children }) => {
     textarea.select();
     document.execCommand("copy");
     document.body.removeChild(textarea);
-    console.log("Text copied to clipboard (fallback):", text);
   };
 
   const generateShortSubmit = async (e, fields) => {
@@ -61,18 +66,12 @@ const UrlsProvider = ({ children }) => {
 
     setLoading(true);
 
-    let url = e.target.url.value;
-    let description = e.target.description.value;
+    const url = e.target.url.value;
+    const description = e.target.description.value;
 
-    if (!url) {
+    if (!url || !description) {
       setLoading(false);
-      setErrors("Empty URL");
-      return;
-    }
-
-    if (!description){
-      setLoading(false);
-      setErrors("Empty description");
+      setErrors("Empty URL or description");
       return;
     }
 
@@ -83,33 +82,37 @@ const UrlsProvider = ({ children }) => {
     }
 
     try {
-      // Check if the URL exists
-      await axios.get(`${API_URL}/proxy?url=${url}`); // Usamos el servidor proxy
-      // If the URL exists, attempt to generate a short URL
+      await axios.get(`${API_URL}/proxy?url=${url}`);
       const response = await axios.post(`${API_URL}/urls/generateShort`, {
         url: url,
       });
-      console.log(DOMAIN_PROD + response.data); // Assuming your response contains data
-      let lastId = await axios.get(`${API_URL}/api/urls?_sort=id&_order=desc`);
-      let json_data = {
-        id: lastId.data.length !== 0 ? lastId.data[0].id + 1 : 1,
+      const lastId = await axios.get(
+        `${API_URL}/api/urls?_sort=id&_order=desc`
+      );
+      const newId = lastId.data.length !== 0 ? lastId.data[0].id + 1 : 1;
+      const json_data = {
+        id: newId,
         url: url,
         short: DOMAIN_PROD + response.data,
         description: description,
         idUser: 0,
       };
-      console.log(json_data);
-      axios.post(`${API_URL}/api/urls`, json_data);
+      await axios.post(`${API_URL}/api/urls`, json_data);
       const contentJSON = await axios.get(`${API_URL}/api/urls`);
-      setGenerated(DOMAIN_PROD + response.data);
-      setUrls(contentJSON.data);
-      getUrls();
-      setLoading(false);
+
+      // Handle requests made by users to avoid delay of server
+      setTimeout(()=>{
+        setGenerated(DOMAIN_PROD + response.data);
+        setUrls(contentJSON.data);
+        getUrls();
+        setLoading(false);
+      },2000)
+      
     } catch (error) {
-      // Si falla la solicitud HEAD, establece un mensaje de error indicando que la URL no existe
-      console.error("Error while fetching data:", error);
-      setErrors("URL does not exist: " + url);
-      setLoading(false);
+      handleRequestError(
+        error,
+        "Error generating short URL or fetching data"
+      );
     }
   };
 
@@ -120,31 +123,40 @@ const UrlsProvider = ({ children }) => {
 
   const redirectByShortLink = (id) => {
     axios
-      .get(`${API_URL}/api/urls/${id}`)
+      .get(`${API_URL}/urls/${id}`)
       .then((response) => {
         window.open(response.data.url, "_blank");
       })
-      .catch((error) => {
-        console.error("Error redirecting by short link:", error);
-      });
+      .catch((error) =>
+        handleRequestError(error, "Error redirecting by short link")
+      );
   };
 
   const getUrls = () => {
     axios
-      .get(`${API_URL}/api/urls/?short_like=${search}&idUser=${idUser}`)
+      .get(`${API_URL}/api//urls/?short_like=${search}&idUser=${idUser}`)
       .then((response) => {
         setUrls(response.data);
         setLoading(false);
       })
-      .catch((error) => {
-        console.error("Error fetching URLs:", error);
-        setLoading(false);
-      });
+      .catch((error) => handleRequestError(error, "Error fetching URLs"));
+  };
+
+  const handleRequestError = (error, errorMessage) => {
+    console.error(`${errorMessage}:`, error);
+    if (error.response) {
+      setErrors(`Request failed with status: ${error.response.status}`);
+    } else if (error.request) {
+      setErrors("Request failed, no response received");
+    } else {
+      setErrors("Unknown error occurred");
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
     getUrls();
-  }, [search, copied]);
+  }, [search, copied, idUser]);
 
   return (
     <UrlsContext.Provider
@@ -153,11 +165,13 @@ const UrlsProvider = ({ children }) => {
         loading,
         errors,
         setErrors,
+        setIdUser,
         generated,
         copied,
         handleCopyToClipboard,
         handleSearch,
         deleteUrl,
+        saveUrl,
         redirectByShortLink,
         generateShortSubmit,
       }}

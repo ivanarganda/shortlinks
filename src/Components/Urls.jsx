@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { UrlsContext } from "../Context/urlContext";
-import { MsgContext } from "../Context/messageContext";
+import { AuthContext } from "../Context/authContext";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckIcon from "@mui/icons-material/Check";
@@ -8,9 +8,18 @@ import CheckIcon from "@mui/icons-material/Check";
 import { motion, AnimatePresence } from "framer-motion";
 import CircularProgress from '@mui/material/CircularProgress';
 
-export default function Urls({ changeType }) {
-  
-  const { urls, setUrls, copied , loading, handleCopyToClipboard , redirectByShortLink, handleSearch } = useContext(UrlsContext);
+export default function Urls({ changeType, type }) {
+
+  const { urls, setIdUser, copied, loading, handleCopyToClipboard, redirectByShortLink, saveUrl , deleteUrl , handleSearch } = useContext(UrlsContext);
+  const { session } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (type == "MyUrls") {
+      setIdUser(session[0].id);
+    } else {
+      setIdUser(0);
+    }
+  })
 
   // Debounce function
   const debounce = (func, delay) => {
@@ -26,8 +35,9 @@ export default function Urls({ changeType }) {
   const debouncedHandleSearch = debounce(handleSearch, 500); // 500ms debounce time
 
   const ListItem = ({ item }) => (
+
     <motion.li
-      initial={{opacity: 0, y: -20 }}
+      initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
@@ -52,12 +62,12 @@ export default function Urls({ changeType }) {
               {copied !== item.id ? (
                 <button
                   aria-label="button for copy short"
-                  onClick={() => { handleCopyToClipboard(item.id, item.short);  }}
+                  onClick={() => { handleCopyToClipboard(item.id, item.short); }}
                   className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900"
                 >
                   <ContentCopyIcon />
                 </button>
-              ) : ( 
+              ) : (
                 <button
                   aria-label="for decoration, check"
                   onClick={(e) => e.preventDefault()}
@@ -68,9 +78,24 @@ export default function Urls({ changeType }) {
               )}
             </div>
             <div className="text-sm font-normal text-gray-500 tracking-wide pr-2">
-              <span className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
-                Add
-              </span>
+              {
+                type === "MyUrls" ? (
+                  <span className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
+                    Remove
+                  </span>
+                ) :
+                  (
+                    <span onClick={()=>{ 
+                      if ( session === false ){
+                        return false;
+                      }
+                      saveUrl(item, session[0].id) 
+                      }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
+                      Save
+                    </span>
+                  )
+              }
+
             </div>
           </div>
         </div>
@@ -85,6 +110,32 @@ export default function Urls({ changeType }) {
           <div className="bg-white shadow-md rounded-lg px-2 py-2 mb-4 pl-2">
             <div className="block text-gray-700 text-lg flex flex-row justify-around items-center font-semibold py-2 px-2">
               <span>Search for shorted links</span>
+              {
+                type === "MyUrls" ? (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      changeType("listUrls");
+                    }}
+                    className="px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
+                  >
+                    View all shorts
+                  </button>
+                ) : (
+
+                  session && <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      changeType("MyUrls");
+                    }}
+                    className="px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
+                  >
+                    My shorts
+                  </button>
+
+                )
+              }
+
               <button
                 onClick={(e) => {
                   e.preventDefault();

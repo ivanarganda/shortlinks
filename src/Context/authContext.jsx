@@ -1,4 +1,4 @@
-import React , { useState , useEffect } from 'react';
+import React , { useState , useEffect , useCallback } from 'react';
 
 const AuthContext = React.createContext();
 
@@ -41,6 +41,14 @@ const AuthProvider = ({ children }) => {
         document.cookie = "token_access" + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
 
+    const loginUserSubmit = ()=>{
+
+    }
+
+    const registerUserSubmit = ()=>{
+
+    }
+
     const logOut = ()=>{
         if ( getTokenAccess() !== "" ){
             deleteCookie();
@@ -58,7 +66,7 @@ const AuthProvider = ({ children }) => {
     },[ session ])
 
     return (
-        <AuthContext.Provider value={{session , setCookieSession , getTokenAccess , deleteCookie ,  setSession , recoverySession , setHasPassword , logOut , hasPassword}}>
+        <AuthContext.Provider value={{session , setCookieSession , getTokenAccess , deleteCookie ,  setSession , recoverySession , setHasPassword , loginUserSubmit , registerUserSubmit , logOut , hasPassword}}>
             {children}
         </AuthContext.Provider>
     )
