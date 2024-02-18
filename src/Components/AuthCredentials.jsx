@@ -45,7 +45,8 @@ export default function AuthCredentials() {
               id: item.id,
               name: item.name,
               email: item.email,
-              jwt_token: item.jwt_token
+              jwt_token: item.jwt_token,
+              picture:picture
             }
           })
 
