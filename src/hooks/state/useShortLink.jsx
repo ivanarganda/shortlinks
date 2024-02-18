@@ -1,10 +1,7 @@
-import React,{ useEffect } from 'react';
+import { useEffect } from 'react';
 import axios from 'axios';
 
 export default function useShortLink( key , code ) {
-
-    const API_URL = import.meta.env.API_URLS_DEV; // for testing
-  // const API_URL = import.meta.env.API_URLS; // for production
 
     useEffect(() => {
         // Perform any necessary side effects using the context values

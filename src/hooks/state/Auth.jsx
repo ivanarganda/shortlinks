@@ -1,11 +1,16 @@
 import React, { useContext , useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Context/authContext';
+import { useLocation } from 'react-router-dom'
 
-export default function Auth() {
+const Auth = ()=> {
 
   const navigate = useNavigate();
   const { session, recoverySession } = useContext(AuthContext);
+  const history = useLocation(null);
+  let { pathname } = history; // target current path
+
+  pathname = pathname == '/' ? '/login' : pathname;
 
   useEffect(() => {
     const auth = JSON.parse(localStorage.getItem('auth')) || false;
@@ -20,11 +25,12 @@ export default function Auth() {
   },[ session ])
 
   useEffect(() => {
-    if (session === false ) {
-      navigate('/login');
+    if ( session==false ) {
+      navigate(pathname);
     } else {
       navigate('/dashboard');
     }
   }, [session, navigate]);
-  
 }
+
+export { Auth };

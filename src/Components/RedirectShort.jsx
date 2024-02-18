@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'
-import { useNavigate , useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import useShortLink from '../hooks/state/useShortLink'
 
 export default function RedirectShort() {
