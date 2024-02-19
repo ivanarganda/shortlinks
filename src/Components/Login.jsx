@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import AuthGoogle from "./AuthCredentials";
 import useFadeIn from "../hooks/state/useFadeIn";

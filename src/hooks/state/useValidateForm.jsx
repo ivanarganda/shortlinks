@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import { useState } from "react";
 
 export default function useValidateForm(type) {
   const [fields, setFields] = useState(

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
@@ -11,7 +11,7 @@ export default function Snackbar_() {
     const { color , msg, opened, handleClose , positions , time } = useContext(MsgContext);
 
     const action = (
-        <React.Fragment>
+        <>
             <Button color="secondary" size="small" onClick={(event) => handleClose(event)}>
                 UNDO
             </Button>
@@ -23,7 +23,7 @@ export default function Snackbar_() {
             >
                 <CloseIcon fontSize="small" />
             </IconButton>
-        </React.Fragment> 
+        </> 
     );
 
     return (

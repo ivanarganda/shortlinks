@@ -1,19 +1,37 @@
-/* eslint-disable */
 import { motion, useScroll } from "framer-motion";
 import { useContext, useState } from "react";
-
 import { AuthContext } from './../Context/authContext'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
 import useFadeIn from './../hooks/state/useFadeIn'
 
 export default function Header() {
-
   const { scrollYProgress } = useScroll();
-  const { session , logOut } = useContext(AuthContext);
-  const [ Section ] = useFadeIn();
+  const { session, logOut } = useContext(AuthContext);
+  const [Section] = useFadeIn();
+  const [hidden, setHidden] = useState(true);
 
-  const [ hidden , setHidden ] = useState(true);
+  const renderUserImage = () => {
+    if (session && session.picture) {
+      return (
+        <img
+          src={session.picture}
+          className='rounded-full h-20 w-20'
+          alt='user image'
+        />
+      );
+    } else {
+      return (
+        <AccountCircleIcon
+          className='h-full mt-2'
+          sx={{ fontSize: '80px', color: 'white' }}
+        />
+      );
+    }
+  };
+
+  const toggleDropdown = () => {
+    setHidden(!hidden);
+  };
 
   return (
     <>
@@ -31,36 +49,14 @@ export default function Header() {
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
             </svg>
           </a>
-          <figure className="cursor-pointer relative" onClick={()=>setHidden(!hidden)}>
-            {
-              <>
-                {
-                  session && (
-                    session[0].picture ? (
-                      <img
-                        src={session[0]?.picture}
-                        className='rounded-full h-20 w-20'
-                        alt='user image'
-                      />
-                    ) : (
-                      <AccountCircleIcon
-                        className='h-full mt-2'
-                        sx={{ fontSize: '80px', color: 'white' }}
-                      />
-
-                    )
-
-                  )
-
-                }
-              </>
-            }
+          <figure className="cursor-pointer relative" onClick={toggleDropdown}>
+            {session && renderUserImage()}
             <Section>
-            <ul className={`absolute top-20 -right-10 bg-gray-200 w-40 z-20 rounded-xl shadow-xl ${hidden ? 'hidden' : 'block'}`}>
-              <li className={`text-gray-600 p-2 hover:font-bold hover:bg-blue-200 rounded-xl transition-all`} onClick={logOut}>Sign out</li>
-              <li className={`text-gray-600 p-2 hover:font-bold hover:bg-blue-200 rounded-xl transition-all`}>Profile</li>
-              <li className={`text-gray-600 p-2 hover:font-bold hover:bg-blue-200 rounded-xl transition-all`}>Settings</li>
-            </ul>
+              <ul className={`absolute top-20 -right-10 bg-gray-200 w-40 z-20 rounded-xl shadow-xl ${hidden ? 'hidden' : 'block'}`}>
+                <li className={`text-gray-600 p-2 hover:font-bold hover:bg-blue-200 rounded-xl transition-all`} onClick={logOut}>Sign out</li>
+                <li className={`text-gray-600 p-2 hover:font-bold hover:bg-blue-200 rounded-xl transition-all`}>Profile</li>
+                <li className={`text-gray-600 p-2 hover:font-bold hover:bg-blue-200 rounded-xl transition-all`}>Settings</li>
+              </ul>
             </Section>
           </figure>
         </div>

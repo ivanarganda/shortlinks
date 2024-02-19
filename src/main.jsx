@@ -12,7 +12,6 @@ import Header from "./Components/Header";
 import Snackbar_ from "./Components/Snackbar";
 import Dashboard from "./Components/Dashboard";
 import Footer from "./Components/Footer.jsx";
-import MyUrls from "./Components/MyUrls";
 import RedirectShort from "./Components/RedirectShort";
 import Resume from "./Components/Resume";
 import { Auth } from "./hooks/state/Auth";
@@ -23,7 +22,7 @@ const [Section] = useFadeIn();
 const App = () => {
   return (
     <React.StrictMode>
-      <GoogleOAuthProvider clientId='909316839836-f6ig 5si1ab9qo7u8jtddt4or98rlhoju.apps.googleusercontent.com'>
+      <GoogleOAuthProvider clientId='909316839836-f6ig5si1ab9qo7u8jtddt4or98rlhoju.apps.googleusercontent.com'>
         <AuthProvider>
           <UrlsProvider>
             <MsgProvider>
@@ -63,7 +62,7 @@ const App = () => {
                         </Section>
                       }
                     />
-                    <Route exact path="/dashboard/profile" element={<MyUrls />} />
+                    <Route exact path="/dashboard/profile" element={()=>{return}} />
                   </Routes>
                   <Section>
                     <Footer />

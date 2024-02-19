@@ -1,87 +1,92 @@
 import React, { useContext, useState } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
-import { MsgContext } from './../Context/messageContext';
-import { AuthContext } from './../Context/authContext';
+import { MsgContext } from '../Context/messageContext';
+import { AuthContext } from '../Context/authContext';
 import axios from 'axios';
 import useUrl from '../hooks/state/useUrl';
 import { Backdrop, CircularProgress } from '@mui/material';
 
 export default function AuthCredentials() {
-
   const { setSession } = useContext(AuthContext);
-  const [loging, setLoging] = useState(false);
   const { useMessage } = useContext(MsgContext);
+  const [isLogging, setIsLogging] = useState(false);
   const API_URL = useUrl('api');
 
-  const authGoogle = async (response_login) => {
+  const handleGoogleAuth = async (response_login) => {
+    useMessage(`Logging in...`, 'success', 2000, 'top', 'center');
 
-    useMessage(`Logging.....`, 'success', 2000, 'top', 'center');
-
-    await axios
-      .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${response_login.access_token}`, {
+    try {
+      const res = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${response_login.access_token}`, {
         headers: {
           Authorization: `Bearer ${response_login.access_token}`,
           Accept: 'application/json'
         }
-      })
-      .then(async (res) => {
+      });
 
-        const { name, email, id, picture } = res.data;
+      const { name, email, picture } = res.data;
+      const response = await axios.get(`${API_URL}/api/users/?email=${email}`);
 
-        const response = await axios.get(`${API_URL}/api/users/?email=${email}`);
+      if (response.data.length !== 0) {
+        const userData = response.data[0];
+        const json = {
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          jwt_token: userData.jwt_token,
+          picture: picture
+        };
 
-        // Set a first party cookie for GoogleOAuth
+        useMessage(`Logged in as ${name}. Redirecting...`, 'success', 2000, 'top', 'center');
+        setIsLogging(true);
 
-        // const { password } = response.data.data.user
+        setTimeout(() => {
+          setIsLogging(false);
+          localStorage.setItem('auth', JSON.stringify(json));
+          setSession(json);
+        }, 3000);
+      } else {
+        useMessage(`${email} does not exist. Must be registered.`, 'error', 5000, 'top', 'center');
+        const lastIdUser = await axios.get(`${API_URL}/api/users/?_sort=id&_order=desc`);
+        const id = lastIdUser.data.length === 0 ? 1 : (lastIdUser.data[0].id + 1);
+        const newUser = {
+          id: id,
+          name: name,
+          email: email,
+          picture: picture,
+          jwt_token: '',
+          expired_token: ''
+        };
 
-        // response.data.picture = picture;
+        await axios.post(`${API_URL}/api/users/`, newUser);
+        newUser.picture = picture;
 
-        console.log(response.data.length);
+        useMessage(`Logged in as ${name}. Redirecting...`, 'success', 2000, 'top', 'center');
+        setIsLogging(true);
 
-        if (response.data.length !== 0) {
-
-          let json = response.data.map((item) => {
-            return {
-              id: item.id,
-              name: item.name,
-              email: item.email,
-              jwt_token: item.jwt_token,
-              picture:picture
-            }
-          })
-
-          useMessage(`Logged as ${name} ... redirecting...`, 'success', 2000, 'top', 'center');
-          setLoging(true);
-          setTimeout(() => {
-            setLoging(false);
-            localStorage.setItem('auth', JSON.stringify(json));
-            setSession(JSON.parse(localStorage.getItem('auth')));
-          }, 3000)
-
-        } else {
-
-          useMessage(`${email} does not exist must be registered`, 'error', 5000, 'top', 'center');
-
-        }
-
-      }).catch((error) => {
-        const messageError = error.response.data.error.user;
-        useMessage(`${messageError}`, 'error', 5000, 'top', 'center');
-      })
-
-  }
+        setTimeout(() => {
+          setIsLogging(false);
+          localStorage.setItem('auth', JSON.stringify(newUser));
+          setSession(newUser);
+        }, 3000);
+      }
+    } catch (error) {
+      const messageError = error.response?.data?.error?.user || 'An error occurred while logging in.';
+      useMessage(`${messageError}`, 'error', 5000, 'top', 'center');
+    }
+  };
 
   const login = useGoogleLogin({
-    onSuccess: (response) => authGoogle(response),
-  })
+    onSuccess: (response) => handleGoogleAuth(response),
+  });
 
   return (
     <div className="bg-white rounded-t-lg p-8">
-      <p className="text-center text-sm text-gray-400 font-light">
-        Sign in with
-      </p>
+      <p className="text-center text-sm text-gray-400 font-light">Sign in with</p>
       <div className="flex items-center justify-center space-x-4 mt-3">
-        <button onClick={() => login()} className="flex items-center py-2 px-4 text-sm uppercase rounded bg-white hover:bg-gray-100 text-indigo-500 border border-transparent hover:border-transparent hover:text-gray-700 shadow-md hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
+        <button
+          onClick={() => login()}
+          className="flex items-center py-2 px-4 text-sm uppercase rounded bg-white hover:bg-gray-100 text-indigo-500 border border-transparent hover:border-transparent hover:text-gray-700 shadow-md hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-6 h-6 mr-3"
@@ -107,14 +112,11 @@ export default function AuthCredentials() {
           Google
         </button>
       </div>
-      {
-        loging && <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={true}
-        >
+      {isLogging && (
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
           <CircularProgress color="inherit" />
         </Backdrop>
-      }
+      )}
     </div>
   );
 }

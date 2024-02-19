@@ -1,4 +1,3 @@
-import React from 'react'
 import Resume from './Resume';
 import useFadeIn from './../hooks/state/useFadeIn';
 
