@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import React , { useRef } from 'react';
 import { useInView } from "framer-motion";
 
 export default function useFadeIn(threshold = 0.5) {

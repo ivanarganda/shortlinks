@@ -4,9 +4,9 @@ import { AuthContext } from '../../Context/authContext';
 import { useLocation } from 'react-router-dom';
 
 const Auth = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(null);
   const { session, recoverySession } = useContext(AuthContext);
-  const history = useLocation();
+  const history = useLocation(null);
   let { pathname } = history;
 
   // Redirect to login if user is not authenticated and tries to access home or dashboard
@@ -33,10 +33,6 @@ const Auth = () => {
       navigate('/dashboard');
     }
   }, [session, navigate]);
-
-  // Since this is a logic component, it doesn't render any JSX
-  // You can replace this with a meaningful message or loader if desired
-  return null;
 };
 
 export { Auth };

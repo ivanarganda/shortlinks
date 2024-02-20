@@ -1,5 +1,5 @@
 import { motion, useScroll } from "framer-motion";
-import { useContext, useState } from "react";
+import React , { useContext, useState } from "react";
 import { AuthContext } from './../Context/authContext'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import useFadeIn from './../hooks/state/useFadeIn'

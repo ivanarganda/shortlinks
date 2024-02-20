@@ -20,6 +20,8 @@ export default function Urls({ changeType, type }) {
     }
   });
 
+  console.log( session.id );
+
   // Debounce function
   const debounce = (func, delay) => {
     let timeoutId;

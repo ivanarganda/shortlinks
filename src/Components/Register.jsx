@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import AuthGoogle from './AuthCredentials'; 
 import useFadeIn from "../hooks/state/useFadeIn";
+import React from 'react';
 
 export default function Register() {
 

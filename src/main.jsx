@@ -19,8 +19,7 @@ import useFadeIn from "./hooks/state/useFadeIn.jsx";
 
 const [Section] = useFadeIn();
 
-const App = () => {
-  return (
+ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
       <GoogleOAuthProvider clientId='909316839836-f6ig5si1ab9qo7u8jtddt4or98rlhoju.apps.googleusercontent.com'>
         <AuthProvider>
@@ -31,7 +30,7 @@ const App = () => {
                   <Auth />
                   <Header />
                   <Routes>
-                    <Route exact path="/" element={<Home />} />
+                    <Route exact path="/" element={()=>{return}} />
                     <Route exact path="/:key/:code" element={<RedirectShort />} />
                     <Route
                       exact
@@ -62,7 +61,6 @@ const App = () => {
                         </Section>
                       }
                     />
-                    <Route exact path="/dashboard/profile" element={()=>{return}} />
                   </Routes>
                   <Section>
                     <Footer />
@@ -75,11 +73,4 @@ const App = () => {
         </AuthProvider>
       </GoogleOAuthProvider>
     </React.StrictMode>
-  );
-};
-
-const Home = () => {
-  return null; // Replace with your home component
-};
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App />); 
+);
