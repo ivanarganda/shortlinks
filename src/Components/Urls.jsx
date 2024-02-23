@@ -20,8 +20,6 @@ export default function Urls({ changeType, type }) {
     }
   });
 
-  console.log( session.id );
-
   // Debounce function
   const debounce = (func, delay) => {
     let timeoutId;
@@ -80,7 +78,7 @@ export default function Urls({ changeType, type }) {
             <div className="text-sm font-normal text-gray-500 tracking-wide pr-2">
               {
                 type === "MyUrls" ? (
-                  <span onClick={() => { deleteUrl(item.id) }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
+                  <span onClick={() => { deleteUrl(item.id,session.id) }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
                     Remove
                   </span>
                 ) : (
@@ -93,7 +91,7 @@ export default function Urls({ changeType, type }) {
                       if (session === false) {
                         return false;
                       }
-                      saveUrl(item, session.id);
+                      saveUrl(item.id, session.id);
                     }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
                       Save
                     </span>

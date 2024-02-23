@@ -17,26 +17,27 @@ const UrlsProvider = ({ children }) => {
   const DOMAIN_PROD = useUrl("domain");
 
   // Only for user
-  const deleteUrl = (id) => {
-    axios
-      .delete(`${API_URL}/api/urls/${id}`)
-      .then(() => {
-        setUrls(urls.filter((url) => url.id !== id));
-        getUrls();
-      })
-      .catch((error) => handleRequestError(error, "Error removing Short"));
-  };
+  const deleteUrl = async(idUrl,idUser) => {
+    console.log( idUrl , idUser );
 
-  const saveUrl = (json_data , idUser ) => {
+    await axios.delete(`${API_URL}/api/urls/?idUrl=${idUrl}&idUser=${idUser}`).then(( res )=>{
+
+      console.log( 'deleted' );
+      getUrls();
+
+    })
+    .catch((error) => handleRequestError(error, "Error deleting Short"));
+  
+  }; 
+
+  const saveUrl = async(idUrl , idUser ) => {
     
-    json_data.idUser = idUser;
-    console.log( json_data ); 
+    console.log( idUrl , idUser );
+
     axios
-      .post(`${API_URL}/api/urls` , {
-        url:json_data.url,
-        short:json_data.short,
-        description:json_data.description,
-        idUser:json_data.idUser
+      .post(`${API_URL}/api/saveUrls` , {
+        idUrl:idUrl,
+        idUser:idUser
       })
       .then(() => {
         getUrls();
@@ -92,24 +93,16 @@ const UrlsProvider = ({ children }) => {
       const response = await axios.post(`${API_URL}/urls/generateShort`, {
         url: url,
       });
-      const lastId = await axios.get(
-        `${API_URL}/api/urls?_sort=id&_order=desc`
-      );
-      const newId = lastId.data.length !== 0 ? lastId.data[0].id + 1 : 1;
       const json_data = {
-        id: newId,
         url: url,
         short: DOMAIN_PROD + response.data,
-        description: description,
-        idUser: 0,
+        description: description
       };
       await axios.post(`${API_URL}/api/urls`, json_data);
-      const contentJSON = await axios.get(`${API_URL}/api/urls`);
 
       // Handle requests made by users to avoid delay of server
       setTimeout(()=>{
         setGenerated(DOMAIN_PROD + response.data);
-        setUrls(contentJSON.data);
         getUrls();
         setLoading(false);
       },2000)
@@ -131,7 +124,7 @@ const UrlsProvider = ({ children }) => {
     axios
       .get(`${API_URL}/api/urls/${id}`)
       .then((response) => {
-        window.open(response.data.url, "_blank");
+        window.open(response.data[0].url, "_blank");
       })
       .catch((error) =>
         handleRequestError(error, "Error redirecting by short link")

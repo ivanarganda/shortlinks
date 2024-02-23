@@ -26,6 +26,8 @@ export default function AuthCredentials() {
       const { name, email, picture } = res.data;
       const response = await axios.get(`${API_URL}/api/users/?email=${email}`);
 
+      console.log( response.data.length );
+
       if (response.data.length !== 0) {
         const userData = response.data[0];
         const json = {
@@ -45,20 +47,17 @@ export default function AuthCredentials() {
           setSession(json);
         }, 3000);
       } else {
-        useMessage(`${email} does not exist. Must be registered.`, 'error', 5000, 'top', 'center');
-        const lastIdUser = await axios.get(`${API_URL}/api/users/?_sort=id&_order=desc`);
-        const id = lastIdUser.data.length === 0 ? 1 : (lastIdUser.data[0].id + 1);
+
         const newUser = {
-          id: id,
           name: name,
           email: email,
+          password:'',
           picture: picture,
           jwt_token: '',
           expired_token: ''
         };
 
-        await axios.post(`${API_URL}/api/users/`, newUser);
-        newUser.picture = picture;
+        axios.post(`${API_URL}/api/users/`, newUser);
 
         useMessage(`Logged in as ${name}. Redirecting...`, 'success', 2000, 'top', 'center');
         setIsLogging(true);
@@ -68,6 +67,7 @@ export default function AuthCredentials() {
           localStorage.setItem('auth', JSON.stringify(newUser));
           setSession(newUser);
         }, 3000);
+
       }
     } catch (error) {
       const messageError = error.response?.data?.error?.user || 'An error occurred while logging in.';
