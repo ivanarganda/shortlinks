@@ -1,4 +1,4 @@
-import React, { useContext , useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { UrlsContext } from "../Context/urlContext";
 import { AuthContext } from "../Context/authContext";
 
@@ -9,16 +9,39 @@ import { motion, AnimatePresence } from "framer-motion";
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Urls({ changeType, type }) {
-  const { urls, setIdUser, copied, loading, handleCopyToClipboard, redirectByShortLink, saveUrl, deleteUrl, checkSaved , handleSearch } = useContext(UrlsContext);
+  const { urls, setIdUser, idUser, copied, loading, handleCopyToClipboard, redirectByShortLink, saveUrl, deleteUrl, checkSaved , handleSearch } = useContext(UrlsContext);
   const { session } = useContext(AuthContext);
+  const [ updatedUrls , setUpdatedUrls ] = useState([]);
 
   useEffect(() => {
     if (type == "MyUrls") {
       setIdUser(session.id);
     } else {
       setIdUser(0);
-    }
+    } 
   });
+
+  // Mutate object to add saved status of url
+  const updateUrls = useCallback(async()=>{
+      const updatedItems = await Promise.all(
+          urls.map(async item => {
+              const saved = await checkSaved(item.id, session?.id);
+              item.saved = saved;
+              return item;
+          })
+      );
+      console.log(updatedItems);
+      setUpdatedUrls(updatedItems);
+      // You can update state or perform other operations with updatedItems here
+  },[ urls ])
+
+  useEffect(()=>{
+    if ( session ){
+      updateUrls();
+    } else {
+      setUpdatedUrls(urls);
+    }
+  },[updateUrls])
 
   // Debounce function
   const debounce = (func, delay) => {
@@ -41,7 +64,7 @@ export default function Urls({ changeType, type }) {
       transition={{ duration: 0.5 }}
     >
       <div key={item.id} className="py text-sm">
-        <div className="flex flex-col lg:flex-row lg:justify-between items-center cursor-pointer text-gray-700 rounded-md px-2 py-2 my-2">
+        <div className={`flex flex-col lg:flex-row ${session ? 'lg:justify-between' : 'lg:justify-around'} items-center cursor-pointer text-gray-700 rounded-md px-2 py-2 my-2`}>
           <div className="flex flex-col mb-2 sm:mb-0 justify-center sm:flex-row sm:justify-around items-center">
             <span className="bg-green-400 h-2 w-2 m-2 rounded-full"></span>
             <div className="flex-grow font-medium px-2">
@@ -77,24 +100,26 @@ export default function Urls({ changeType, type }) {
             </div>
             <div className="text-sm font-normal text-gray-500 tracking-wide pr-2">
               {
-                type === "MyUrls" ? (
-                  <span onClick={() => { deleteUrl(item.id,session.id) }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
+                type === "MyUrls" && idUser != 0 ? (
+                  <span onClick={() => { deleteUrl(item.id, session.id) }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
                     Remove
                   </span>
                 ) : (
-                  checkSaved( item ) > 2 ? (
-                    <span onClick={() => { /* You can add functionality here for items that belong to the user */ }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
-                      Saved
-                    </span>
-                  ) : (
-                    <span onClick={() => {
-                      if (session === false) {
-                        return false;
-                      }
-                      saveUrl(item.id, session.id);
-                    }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
-                      Save
-                    </span>
+                  session && (
+                    item.saved !== 1 ? (
+                      <span 
+                      onClick={() => {
+                        saveUrl(item.id, session.id);
+                      }} className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
+                        Save
+                      </span>
+                    ) : 
+                    (
+                      <span className="px-5 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900">
+                        Saved
+                      </span>
+                    )
+                    
                   )
                 )
               }
@@ -173,8 +198,8 @@ export default function Urls({ changeType, type }) {
                   </div>
                 ) : (
                   <>
-                    {urls.length !== 0 ? (
-                      urls.map((item) => (
+                    {updatedUrls.length !== 0 ? (
+                      updatedUrls.map((item) => (
                         <ListItem key={item.id} item={item} />
                       ))
                     ) : (

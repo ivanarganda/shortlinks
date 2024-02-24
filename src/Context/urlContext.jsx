@@ -131,11 +131,17 @@ const UrlsProvider = ({ children }) => {
       );
   };
 
-  const checkSaved = async( item )=>{
-    const response = await axios.get(`${API_URL}/api/urls/?url=${item.url}&short=${item.short}&description=${item.description}`);
-    console.log( `${API_URL}/api/urls/?url=${item.url}&short=${item.short}&description=${item.description}` );
-    return parseInt(response.data.length); 
-  }
+  const checkSaved = async (idUrl, idUser) => {
+    idUser = idUser || 0;
+
+    try {
+        const response = await axios.get(`${API_URL}/api/savedUrl/?idUrl=${idUrl}&idUser=${idUser}`);
+        return response.data.length;
+
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
 
   const getUrls = () => {
     axios
@@ -171,6 +177,7 @@ const UrlsProvider = ({ children }) => {
         errors,
         setErrors,
         setIdUser,
+        idUser,
         generated,
         copied,
         handleCopyToClipboard,
