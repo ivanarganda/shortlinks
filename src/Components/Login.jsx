@@ -1,12 +1,48 @@
 import { Link } from "react-router-dom";
 import AuthGoogle from "./AuthCredentials";
 import useFadeIn from "../hooks/state/useFadeIn";
-import React from 'react';
+import React,{ useState , useMemo , useContext } from 'react';
+import { AuthContext } from "../Context/authContext";
+import { Backdrop , CircularProgress } from "@mui/material";
+import { MsgContext } from "../Context/messageContext";
+
 
 export default function Login() {
-  const [Section] = useFadeIn(true);
 
-  return (
+  const [Section] = useMemo(()=>useFadeIn(true),[]);
+
+  const [credentials , setCredentials] = useState({
+    username:'',
+    password:''
+  });
+  const { loginUserSubmit , errors , setSession } = useContext(AuthContext);
+  const { useMessage } = useContext(MsgContext);
+  const [ isLogging , setIsLogging ] = useState(false);
+
+  const handleChange = ( event )=>{
+
+    const { name , value }  = event.target;
+    setCredentials({...credentials , [name]:value});
+
+  }
+
+  const handleFormSubmit = async ( event )=>{
+    setIsLogging(true);
+    useMessage(`Logging in...`, 'success', 2000, 'top', 'center');
+    const isLogged = await loginUserSubmit(event);
+    if (isLogged) {
+      useMessage(`Logged in as ${name}. Redirecting...`, 'success', 2000, 'top', 'center');
+      setTimeout(() => {
+        setIsLogging(false);
+        localStorage.setItem('auth', JSON.stringify(isLogged[0]));
+        setSession(isLogged[0]);
+      }, 3000);
+    } else { 
+      setIsLogging(false);
+    }
+  }
+
+  return ( 
     <Section>
       <div className="p-8 lg:w-1/2 mx-auto min-w-[350px]">
         <AuthGoogle />
@@ -14,13 +50,19 @@ export default function Login() {
           <p className="text-center text-sm text-gray-500 font-light">
             Or sign in with credentials
           </p>
-          <form className="mt-6">
+          {
+            errors && <p className="text-red-400 font-bold mt-5 text-xl">{errors}</p>
+          }
+          <form onSubmit={handleFormSubmit} className="mt-6">
             <div className="relative">
               <input
                 className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600 transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
                 id="username"
+                name="username"
                 type="text"
                 placeholder="Email"
+                onChange={handleChange}
+                value={credentials.email}
               />
               <div className="absolute left-0 inset-y-0 flex items-center">
                 <svg
@@ -38,8 +80,11 @@ export default function Login() {
               <input
                 className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600 transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
                 id="password"
+                name="password"
                 type="text"
                 placeholder="Password"
+                onChange={handleChange}
+                value={credentials.password}
               />
               <div className="absolute left-0 inset-y-0 flex items-center">
                 <svg
@@ -74,6 +119,11 @@ export default function Login() {
           </form>
         </div>
       </div>
+      {isLogging && (
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress color="inherit" />
+        </Backdrop> 
+      )}
     </Section>
   );
 }

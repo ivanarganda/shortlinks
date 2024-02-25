@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy , Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import './index.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -17,9 +17,16 @@ import Resume from "./Components/Resume";
 import { Auth } from "./hooks/state/Auth";
 import useFadeIn from "./hooks/state/useFadeIn.jsx";
 
+const LazyLogin = lazy(()=>import('./Components/Login.jsx'))
+const LazyRegister = lazy(()=>import('./Components/Register.jsx'))
+const LazyHeader = lazy(()=>import('./Components/Header.jsx'))
+const LazyDashboard = lazy(()=>import('./Components/Dashboard.jsx'))
+const LazyFooter = lazy(()=>import('./Components/Footer.jsx'))
+const LazyResume = lazy(()=>import('./Components/Resume.jsx'))
+
 const [Section] = useFadeIn();
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById('root')).render( 
     <React.StrictMode>
       <GoogleOAuthProvider clientId='909316839836-f6ig5si1ab9qo7u8jtddt4or98rlhoju.apps.googleusercontent.com'>
         <AuthProvider>
@@ -28,7 +35,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <div className="w-full min-w-[350px]">
                 <Router basename="/">
                   <Auth />
-                  <Header />
+                  <Suspense fallback={null}>
+                  <LazyHeader />
                   <Routes>
                     <Route exact path="/" element={()=>{return}} />
                     <Route exact path="/:key/:code" element={<RedirectShort />} />
@@ -37,8 +45,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                       path="/login"
                       element={
                         <Section>
-                          <Resume />
-                          <Login />
+                          <LazyResume />
+                          <LazyLogin />
                         </Section>
                       }
                     />
@@ -47,8 +55,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                       path="/register"
                       element={
                         <Section>
-                          <Resume />
-                          <Register />
+                          <LazyResume />
+                          <LazyRegister />
                         </Section>
                       }
                     />
@@ -57,14 +65,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                       path="/dashboard"
                       element={
                         <Section>
-                          <Dashboard />
+                          <LazyDashboard />
                         </Section>
                       }
                     />
                   </Routes>
                   <Section>
-                    <Footer />
+                    <LazyFooter />
                   </Section>
+                  </Suspense>
                   <Snackbar_ />
                 </Router>
               </div>

@@ -39,7 +39,7 @@ export default function Header() {
         className="fixed top-0 left-0 right-0 h-1 bg-purple-500"
         style={{ scaleX: scrollYProgress }}
       />
-      <div className='min-w-[350px]'>
+      <header className='min-w-[350px]'>
         <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-200 md:text-5xl lg:text-6xl dark:text-white">We offer you, shorted links</h1>
         <p className="mb-6 text-lg font-normal text-gray-300 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-300">They facility to understand their aim and main function.You could search shorted links available and save them your profile and sign in to create your own shorted links</p>
         <div className="flex flex-row flex-flow m-auto items-center justify-center w-full gap-10">
@@ -60,7 +60,7 @@ export default function Header() {
             </Section>
           </figure>
         </div>
-      </div >
+      </header>
     </>
   )
 }
