@@ -7,7 +7,7 @@ export default function useShortLink( key , code ) {
         // Perform any necessary side effects using the context values
         // For example:
         axios.get(`https://ws-shortlinks.onrender.com/api/urls/?short_like=https://linkshort.website/${key}/${code}`).then(( response )=>{
-            if ( response.data[0].length !== 0 ){
+            if ( response.data.length !== 0 ){
                 window.location = response.data[0].url; 
             }
         })

@@ -68,7 +68,11 @@ export default function Urls({ changeType, type }) {
           <div className="flex flex-col mb-2 sm:mb-0 justify-center sm:flex-row sm:justify-around items-center">
             <span className="bg-green-400 h-2 w-2 m-2 rounded-full"></span>
             <div className="flex-grow font-medium px-2">
-              <span className="" onClick={() => redirectByShortLink(item.id)}>
+              <span className="" onClick={() => { 
+                  console.log(item.id);
+                  // return false;
+                  redirectByShortLink(item.id) 
+                }}>
                 {item.short}
               </span>
             </div>
