@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useParams } from 'react-router-dom';
 import { AuthContext } from '../../Context/authContext';
 import { useLocation } from 'react-router-dom';
 
@@ -30,7 +30,7 @@ const Auth = () => {
     if (!session) {
       navigate(pathname);
     } else {
-      navigate('/dashboard');
+        navigate('/dashboard'); 
     }
   }, [session, navigate]);
 };

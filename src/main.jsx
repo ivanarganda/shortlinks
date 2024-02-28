@@ -34,39 +34,47 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <MsgProvider>
               <div className="w-full min-w-[350px]">
                 <Router basename="/">
-                  <Auth />
                   <Suspense fallback={null}>
                   <LazyHeader />
                   <Routes>
-                    <Route exact path="/" element={()=>{return}} />
+                    <Route exact path="/" element={<Auth />} />
                     <Route exact path="/:key/:code" element={<RedirectShort />} />
                     <Route
                       exact
                       path="/login"
                       element={
-                        <Section>
-                          <LazyResume />
-                          <LazyLogin />
-                        </Section>
+                        <>
+                          <Auth />
+                          <Section>
+                            <LazyResume />
+                            <LazyLogin />
+                          </Section>
+                        </>
                       }
                     />
                     <Route
                       exact
                       path="/register"
                       element={
-                        <Section>
-                          <LazyResume />
-                          <LazyRegister />
-                        </Section>
+                        <>
+                          <Auth />
+                          <Section>
+                            <LazyResume />
+                            <LazyRegister />
+                          </Section>
+                        </>
                       }
                     />
                     <Route
                       exact
                       path="/dashboard"
                       element={
-                        <Section>
-                          <LazyDashboard />
-                        </Section>
+                        <>
+                          <Auth />
+                          <Section>
+                            <LazyDashboard />
+                          </Section>
+                        </>
                       }
                     />
                   </Routes>
