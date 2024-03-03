@@ -71,7 +71,7 @@ export default function Urls({ changeType, type }) {
               <span className="" onClick={() => { 
                   console.log(item.id);
                   // return false;
-                  redirectByShortLink(item.id) 
+                  redirectByShortLink(item.id , session ? session.id : 0); 
                 }}>
                 {item.short}
               </span>

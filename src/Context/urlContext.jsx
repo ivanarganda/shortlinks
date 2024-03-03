@@ -120,9 +120,10 @@ const UrlsProvider = ({ children }) => {
     setSearch(e.target.value);
   };
 
-  const redirectByShortLink = (id) => {
+  const redirectByShortLink = (id , idUser ) => { 
+
     axios
-      .get(`${API_URL}/api/redirect_url/?idUrl=${id}`)
+      .get(`${API_URL}/api/redirect_url/?idUrl=${id}&idUser=${idUser}`) 
       .then((response) => {
         window.open(response.data[0].url, "_blank");
       })
